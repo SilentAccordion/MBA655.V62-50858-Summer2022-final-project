@@ -2,8 +2,7 @@ from tkinter import Tk, Label, Button
 # import datetime
 import tweepy
 
-from API_keys import consumer_key, consumer_secret,\
-                     access_token, access_token_secret
+from API_keys import bearer_token
 
 
 class TwitterPanelGUI:
@@ -26,27 +25,37 @@ class TwitterPanelGUI:
 
     def get_tweet(self):
 
-        auth = tweepy.OAuthHandler(consumer_key, consumer_secret)
-        auth.set_access_token(access_token, access_token_secret)
+        # auth = tweepy.OAuthHandler(consumer_key, consumer_secret)
+        # auth.set_access_token(access_token, access_token_secret)
+
+        # You can provide the consumer key and secret with the access token and access
+        # token secret to authenticate as a user
+        client = tweepy.Client(bearer_token=bearer_token)
 
         # Setup fileCache to avoid issues with API Limits
-        cache_dir = "./cache/"
-        timeout = 60
+        # cache_dir = "./cache/"
+        # timeout = 60
 
-        cache = tweepy.FileCache(cache_dir,timeout)
+        # cache = client.FileCache(cache_dir, timeout)
 
-        # Initialize the API
-        api = tweepy.API(auth_handler=auth, cache=cache)
+        response = client.search_recent_tweets("Tweepy")
+        
+        # The method returns a Response object, a named tuple with data, includes,
+        # errors, and meta fields
+        print(response.meta)
 
-        ## Print out current rate limits status
-        # print(api.rate_limit_status())
+        # In this case, the data field of the Response returned is a list of Tweet
+        # objects
+        tweets = response.data
 
-        q = "@realDonaldTrump AND -filter:retweets AND -filter:replies"
+        # Each Tweet object has default ID and text fields
+        for tweet in tweets:
+            print(tweet.id)
+            print(tweet.text)
 
-        search_tweets = tweepy.Cursor(api.search,
-                            tweet_mode = 'extended',
-                            q = q,
-                            lang = 'en').items(100)
+        # By default, this endpoint/method returns 10 results
+        # You can retrieve up to 100 Tweets by specifying max_results
+        response = client.search_recent_tweets("Tweepy", max_results=100)
 
 
 root = Tk()
