@@ -1,7 +1,7 @@
 from tkinter import Tk, Label, Button, Text,\
                     INSERT, END, Canvas, Frame
 
-from tkinter.messagebox import showerror, showwarning
+from tkinter.messagebox import showerror, showwarning, showinfo
 
 # import datetime
 import random
@@ -12,7 +12,7 @@ import tweepy
 from io import BytesIO
 # import base64
 # from urllib.request import urlopen
-from PIL import Image, ImageTk
+from PIL import Image, ImageTk, UnidentifiedImageError
 import requests
 
 
@@ -165,8 +165,13 @@ class TwitterPanelGUI:
         # image_b64 = base64.encodebytes(image_byt)
         # print(image_b64)
 
-        response = requests.get(image_url)
-        image = Image.open(BytesIO(response.content))
+        try:
+            response = requests.get(image_url)
+            image = Image.open(BytesIO(response.content))
+        except UnidentifiedImageError:
+            showinfo(title="Alert", message="Tweet Avatar failed\
+                                                to load")
+            return
 
         photo = ImageTk.PhotoImage(image)
 
