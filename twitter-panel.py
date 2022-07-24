@@ -95,6 +95,11 @@ class TwitterPanelGUI:
         # Check length of tweet array
         # print(len(tweets))
 
+        if 0 == len(tweets):
+            showwarning(title="Alert", message="No Tweets have been found \
+                                                that match the search term")
+            return
+
         # Display all tweets
         # print(tweets)
 
